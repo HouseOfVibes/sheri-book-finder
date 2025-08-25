@@ -1,0 +1,13 @@
+{
+  "name": "sheri-book-finder",
+  "version": "1.0.0",
+  "description": "Book search and Notion integration tool",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.15"
+  }
+}
