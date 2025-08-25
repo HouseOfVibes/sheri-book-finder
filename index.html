@@ -34,7 +34,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #1e40af, #0d9488);
             color: white;
             padding: 40px 30px;
             text-align: center;
@@ -103,12 +103,13 @@
 
         .search-tab.active {
             background: white;
-            color: #3b82f6;
+            color: #0d9488;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .search-tab:hover:not(.active) {
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(13, 148, 136, 0.05);
+            color: #0d9488;
         }
 
         .tiktok-input {
@@ -275,7 +276,7 @@
             right: 10px;
             top: 50%;
             transform: translateY(-50%);
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            background: linear-gradient(135deg, #1e40af, #0d9488);
             color: white;
             border: none;
             padding: 12px 20px;
@@ -291,7 +292,7 @@
 
         .search-btn:hover {
             transform: translateY(-50%) scale(1.05);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
         }
 
         .search-btn:disabled {
@@ -372,23 +373,26 @@
         }
 
         .add-btn {
-            background: linear-gradient(135deg, #d4af37, #b8941f);
-            color: #000000;
+            background: linear-gradient(135deg, #1e40af, #0d9488);
+            color: white;
             border: none;
             padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: bold;
+            border-radius: 8px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             align-self: flex-start;
             margin-top: auto;
-            border: 1px solid #b8941f;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
         .add-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
-            background: linear-gradient(135deg, #e6c547, #d4af37);
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+            background: linear-gradient(135deg, #1e40af, #0f766e);
         }
 
         .add-btn:disabled {
@@ -711,7 +715,7 @@
         function displayTikTokResults(data) {
             results.innerHTML = `
                 <div class="loading" style="background: linear-gradient(135deg, #fff9e6, #ffffff); border: 2px solid #d4af37;">
-                    <p style="color: #d4af37; font-weight: bold;">🎉 ${data.message}</p>
+                    <p style="color: #d4af37; font-weight: bold;"><i data-feather="check-circle"></i> ${data.message}</p>
                     <div style="margin: 20px 0;">
                         ${data.books.map((book, index) => `
                             <div style="
@@ -983,6 +987,7 @@
                     </div>
                 `;
                 results.innerHTML = noResultsHTML;
+                if (window.initializeIcons) window.initializeIcons();
                 return;
             }
 
@@ -1017,7 +1022,9 @@
                     }).join('')}
                 </div>
                 <div class="stats">
-                    📊 Showing ${books.length} of ${total.toLocaleString()} results | Searches: ${searchStats.totalSearches} | Books Added: ${searchStats.booksAdded}
+                    <i data-feather="bar-chart-2"></i> Showing ${books.length} of ${total.toLocaleString()} results | 
+                    <i data-feather="activity"></i> Searches: ${searchStats.totalSearches} | 
+                    <i data-feather="plus-circle"></i> Books Added: ${searchStats.booksAdded}
                 </div>
                 ${books.length < total ? `
                     <div style="text-align: center; padding: 20px;">
@@ -1027,6 +1034,8 @@
                     </div>
                 ` : ''}
             `;
+            
+            if (window.initializeIcons) window.initializeIcons();
         }
 
         async function loadMoreBooks() {
@@ -1130,16 +1139,20 @@
     </script>
     
     <script>
-        // Initialize Feather icons
-        feather.replace();
+        // Initialize Feather icons on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            feather.replace();
+        });
         
-        // Re-initialize icons after dynamic content updates
-        const originalDisplayResults = displayResults;
-        displayResults = function(...args) {
-            const result = originalDisplayResults.apply(this, args);
-            setTimeout(() => feather.replace(), 10);
-            return result;
-        };
+        // Reinitialize icons after any dynamic content update
+        function initializeIcons() {
+            setTimeout(() => {
+                feather.replace();
+            }, 100);
+        }
+        
+        // Call this after search results are displayed
+        window.initializeIcons = initializeIcons;
     </script>
 </body>
 </html>
