@@ -173,17 +173,22 @@ export default async function handler(req, res) {
       };
     }
 
-    // Add Audiobook Link - prioritize Internet Archive, fallback to Audible search
+    // Add Audiobook Link - always provide either Internet Archive or Audible search
     if (internetArchiveId) {
       properties['Audiobook Link'] = {
         url: `https://archive.org/details/${internetArchiveId}`
       };
-    } else if (audioAvailable === 'Yes') {
-      // Generate Audible search link as fallback
+    } else {
+      // Always provide Audible search as fallback - users can check if audiobook exists
       const audibleSearch = `https://www.audible.com/search?keywords=${encodeURIComponent(`${title} ${authors}`)}`;
       properties['Audiobook Link'] = {
         url: audibleSearch
       };
+    }
+    
+    // Always set audiobook as potentially available for user to check
+    if (audioAvailable !== 'Yes') {
+      audioAvailable = 'Check Audible';
     }
 
     // Enhanced Summary with rich metadata

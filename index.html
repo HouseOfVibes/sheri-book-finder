@@ -61,6 +61,81 @@
             padding: 30px 40px 20px;
         }
 
+        .search-fields-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .search-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .search-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .search-field-input {
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            background: white;
+            color: #374151;
+        }
+
+        .search-field-input:focus {
+            outline: none;
+            border-color: #0d9488;
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+        }
+
+        .search-btn-new {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #1e40af, #0d9488);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-btn-new:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+            background: linear-gradient(135deg, #1e40af, #0f766e);
+        }
+
+        .search-btn-new:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .search-fields-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+
         .search-box {
             position: relative;
             margin-bottom: 20px;
@@ -547,20 +622,28 @@
 
             <!-- Manual Search Mode -->
             <div class="search-mode active" id="manualMode">
-                <div class="search-box">
-                    <input 
-                        type="text" 
-                        class="search-input" 
-                        placeholder="Search by title, author, or even partial info... 🔍"
-                        id="searchInput"
-                        autocomplete="off"
-                    >
-                    <button class="search-btn" id="searchBtn">Search</button>
-                    <div class="search-suggestions" id="searchSuggestions"></div>
+                <div class="search-fields-container">
+                    <div class="search-field-group">
+                        <label for="titleInput" class="search-label">
+                            <i data-feather="book"></i> Book Title
+                        </label>
+                        <input type="text" id="titleInput" placeholder="Enter book title..." maxlength="100" class="search-field-input" autocomplete="off">
+                    </div>
+                    
+                    <div class="search-field-group">
+                        <label for="authorInput" class="search-label">
+                            <i data-feather="user"></i> Author Name
+                        </label>
+                        <input type="text" id="authorInput" placeholder="Enter author name..." maxlength="100" class="search-field-input" autocomplete="off">
+                    </div>
+                    
+                    <button class="search-btn-new" id="searchBtn" onclick="searchBooks()">
+                        <i data-feather="search"></i> Search Books
+                    </button>
                 </div>
                 
                 <div class="search-tips">
-                    <strong>Multi-Source Search:</strong> Searches Open Library + Google Books simultaneously! Try "Granger", "Maya Angelou", "vampire romance", or any author/title.
+                    <strong>Smart Search:</strong> Fill in book title, author, or both for more accurate results. Searches Open Library + Google Books simultaneously!
                 </div>
             </div>
 
@@ -889,7 +972,26 @@
 
         // Search functionality using your Vercel API
         async function searchBooks(isLoadMore = false) {
-            const query = searchInput.value.trim();
+            const titleInput = document.getElementById('titleInput');
+            const authorInput = document.getElementById('authorInput');
+            
+            const title = titleInput?.value.trim() || '';
+            const author = authorInput?.value.trim() || '';
+            
+            // Build smart query based on what's filled in
+            let query = '';
+            if (title && author) {
+                query = `title:"${title}" author:"${author}"`;
+            } else if (title) {
+                query = `title:"${title}"`;
+            } else if (author) {
+                query = `author:"${author}"`;
+            } else {
+                // Try old search input as fallback
+                const oldSearchInput = document.getElementById('searchInput');
+                query = oldSearchInput?.value.trim() || '';
+            }
+            
             if (!query) return;
 
             if (!isLoadMore) {
@@ -906,11 +1008,22 @@
                 addToRecentSearches(query);
                 updateStats('search');
                 
-                // Show loading
+                // Show loading with smart message
+                let searchMessage = 'Searching';
+                if (title && author) {
+                    searchMessage += ` for "${title}" by ${author}`;
+                } else if (title) {
+                    searchMessage += ` for book "${title}"`;
+                } else if (author) {
+                    searchMessage += ` for books by "${author}"`;
+                } else {
+                    searchMessage += ` for "${query}"`;
+                }
+                
                 results.innerHTML = `
                     <div class="loading">
                         <div class="spinner"></div>
-                        <p>Searching Open Library for "${query}"...</p>
+                        <p>${searchMessage}...</p>
                     </div>
                 `;
             }
@@ -1134,8 +1247,23 @@
             }
         });
 
-        // Auto-focus on load
-        searchInput.focus();
+        // Add Enter key support for new search fields
+        document.getElementById('titleInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchBooks();
+            }
+        });
+        
+        document.getElementById('authorInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchBooks();
+            }
+        });
+
+        // Auto-focus on first field
+        document.getElementById('titleInput')?.focus();
     </script>
     
     <script>
