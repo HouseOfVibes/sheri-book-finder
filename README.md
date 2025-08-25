@@ -10,7 +10,7 @@ A beautiful, mobile-friendly web app that searches Open Library's 3M+ book datab
 
 - **Smart Book Search**: Search 3M+ books with partial info
 - **One-Click Notion Integration**: Automatically adds to your database
-- **Premium Design**: Black, white, and gold luxury theme
+- **Premium Design**: Dark blue and teal professional theme
 - **Mobile Responsive**: Perfect for TikTok book discoveries
 - **Genre Detection**: Auto-categorizes books by genre
 

@@ -188,8 +188,8 @@
         }
 
         .search-tips {
-            background: linear-gradient(135deg, #fff9e6, #ffffff);
-            border-left: 4px solid #d4af37;
+            background: linear-gradient(135deg, #f0f9ff, #ffffff);
+            border-left: 4px solid #0d9488;
             padding: 15px 20px;
             margin-bottom: 25px;
             border-radius: 8px;
@@ -198,7 +198,7 @@
         }
 
         .search-tips strong {
-            color: #d4af37;
+            color: #0d9488;
         }
 
         .search-tabs {
@@ -245,14 +245,14 @@
         }
 
         .tiktok-input:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+            border-color: #0d9488;
+            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.2);
         }
 
         .tiktok-btn {
             width: 100%;
-            background: linear-gradient(135deg, #d4af37, #b8941f);
-            color: #000000;
+            background: linear-gradient(135deg, #1e40af, #0d9488);
+            color: white;
             border: none;
             padding: 15px 20px;
             border-radius: 12px;
@@ -307,8 +307,8 @@
         }
 
         .ai-message {
-            background: linear-gradient(135deg, #fff9e6, #ffffff);
-            border: 2px solid #d4af37;
+            background: linear-gradient(135deg, #f0f9ff, #ffffff);
+            border: 2px solid #0d9488;
             align-self: flex-start;
         }
 
@@ -320,7 +320,7 @@
 
         .book-suggestion {
             background: #fff;
-            border: 1px solid #d4af37;
+            border: 1px solid #0d9488;
             border-radius: 8px;
             padding: 10px;
             margin: 8px 0;
@@ -350,13 +350,13 @@
         }
 
         .chat-input:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+            border-color: #0d9488;
+            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.2);
         }
 
         .chat-btn {
-            background: linear-gradient(135deg, #d4af37, #b8941f);
-            color: #000000;
+            background: linear-gradient(135deg, #1e40af, #0d9488);
+            color: white;
             border: none;
             padding: 15px 25px;
             border-radius: 12px;
@@ -388,8 +388,8 @@
         }
 
         .search-input:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+            border-color: #0d9488;
+            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.2);
         }
 
         .search-btn {
@@ -446,8 +446,8 @@
 
         .book-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
-            border-color: #d4af37;
+            box-shadow: 0 10px 25px rgba(13, 148, 136, 0.2);
+            border-color: #0d9488;
         }
 
         .book-cover {
@@ -475,7 +475,7 @@
         .book-title {
             font-size: 1.4em;
             font-weight: bold;
-            color: #000000;
+            color: white;
             margin-bottom: 8px;
             line-height: 1.3;
         }
@@ -533,7 +533,7 @@
             width: 40px;
             height: 40px;
             border: 4px solid #e1e8ed;
-            border-top: 4px solid #d4af37;
+            border-top: 4px solid #0d9488;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
@@ -545,8 +545,8 @@
         }
 
         .setup-notice {
-            background: linear-gradient(135deg, #fff9e6, #ffffff);
-            border: 2px solid #d4af37;
+            background: linear-gradient(135deg, #f0f9ff, #ffffff);
+            border: 2px solid #0d9488;
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 30px;
@@ -554,7 +554,7 @@
         }
 
         .setup-notice h3 {
-            color: #000000;
+            color: white;
             margin-bottom: 10px;
         }
 
@@ -582,7 +582,7 @@
 
         .suggestion-item:hover {
             background: #f8f8f8;
-            color: #d4af37;
+            color: #0d9488;
         }
 
         .suggestion-item:last-child {
@@ -703,13 +703,13 @@
                 <input 
                     type="url" 
                     class="tiktok-input" 
-                    placeholder="Paste your TikTok link here... 📱"
+                    placeholder="Paste your TikTok link here..."
                     id="tiktokInput"
                 >
-                <button class="tiktok-btn" id="tiktokBtn">🔍 Find Books from TikTok</button>
+                <button class="tiktok-btn" id="tiktokBtn"><i data-feather="search"></i> Find Books from TikTok</button>
                 
                 <div class="search-tips">
-                    <strong>🎬 TikTok Tips:</strong> Works with book reviews, recommendations, hauls, and "what I'm reading" videos!
+                    <strong>TikTok Tips:</strong> Works with book reviews, recommendations, hauls, and "what I'm reading" videos!
                 </div>
             </div>
 
@@ -792,7 +792,7 @@
             results.innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
-                    <p>Analyzing TikTok video for book mentions... 🎬</p>
+                    <p>Analyzing TikTok video for book mentions...</p>
                 </div>
             `;
 
@@ -820,7 +820,7 @@
                                         ${data.suggestions.map(s => `
                                             <button onclick="searchFromSuggestion('${s}')" style="
                                                 margin: 5px; padding: 8px 15px; 
-                                                background: #d4af37; color: #000; 
+                                                background: #0d9488; color: white; 
                                                 border: none; border-radius: 6px; cursor: pointer;
                                             ">${s}</button>
                                         `).join('')}
@@ -842,14 +842,14 @@
                 `;
             } finally {
                 tiktokBtn.disabled = false;
-                tiktokBtn.textContent = '🔍 Find Books from TikTok';
+                tiktokBtn.innerHTML = '<i data-feather="search"></i> Find Books from TikTok';
             }
         }
 
         function displayTikTokResults(data) {
             results.innerHTML = `
-                <div class="loading" style="background: linear-gradient(135deg, #fff9e6, #ffffff); border: 2px solid #d4af37;">
-                    <p style="color: #d4af37; font-weight: bold;"><i data-feather="check-circle"></i> ${data.message}</p>
+                <div class="loading" style="background: linear-gradient(135deg, #f0f9ff, #ffffff); border: 2px solid #0d9488;">
+                    <p style="color: #0d9488; font-weight: bold;"><i data-feather="check-circle"></i> ${data.message}</p>
                     <div style="margin: 20px 0;">
                         ${data.books.map((book, index) => `
                             <div style="
@@ -864,7 +864,7 @@
                                     <small style="color: #999; margin-left: 10px;">(${book.confidence} confidence)</small>
                                 </div>
                                 <button onclick="searchFromTikTok('${book.title}${book.author ? ' ' + book.author : ''}')" style="
-                                    padding: 8px 15px; background: #d4af37; color: #000;
+                                    padding: 8px 15px; background: #0d9488; color: white;
                                     border: none; border-radius: 6px; cursor: pointer;
                                 ">Search This</button>
                             </div>
@@ -923,7 +923,7 @@
                     // Add AI response
                     const aiDiv = document.createElement('div');
                     aiDiv.className = 'ai-message';
-                    aiDiv.innerHTML = `<strong>🤖 Sheri's Book AI:</strong> ${data.response}`;
+                    aiDiv.innerHTML = `<strong><i data-feather="cpu"></i> Sheri's Book AI:</strong> ${data.response}`;
                     chatMessages.appendChild(aiDiv);
                     
                     // Add extracted books as clickable suggestions
@@ -932,7 +932,7 @@
                         suggestionsDiv.innerHTML = data.extracted_books.map(book => 
                             `<div class="book-suggestion" onclick="searchFromAI('${book.title} ${book.author}')">
                                 <strong>"${book.title}"</strong> by ${book.author} 
-                                <small style="color: #d4af37;">→ Click to search</small>
+                                <small style="color: #0d9488;">→ Click to search</small>
                             </div>`
                         ).join('');
                         aiDiv.appendChild(suggestionsDiv);
@@ -951,14 +951,14 @@
                 } else {
                     const errorDiv = document.createElement('div');
                     errorDiv.className = 'ai-message';
-                    errorDiv.innerHTML = `<strong>🤖 Sheri's Book AI:</strong> ${data.fallback_response || "Sorry, I'm having trouble right now. Try asking about specific genres or authors you like!"}`;
+                    errorDiv.innerHTML = `<strong><i data-feather="cpu"></i> Sheri's Book AI:</strong> ${data.fallback_response || "Sorry, I'm having trouble right now. Try asking about specific genres or authors you like!"}`;
                     chatMessages.appendChild(errorDiv);
                 }
                 
             } catch (error) {
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'ai-message';
-                errorDiv.innerHTML = `<strong>🤖 Sheri's Book AI:</strong> Oops! I'm having connection issues. Try searching manually or ask me again in a moment! 💫`;
+                errorDiv.innerHTML = `<strong><i data-feather="cpu"></i> Sheri's Book AI:</strong> Oops! I'm having connection issues. Try searching manually or ask me again in a moment!`;
                 chatMessages.appendChild(errorDiv);
             } finally {
                 chatBtn.disabled = false;
@@ -1246,7 +1246,7 @@
                     // Update stats display
                     const statsElement = document.querySelector('.stats');
                     if (statsElement) {
-                        statsElement.innerHTML = `📊 Searches: ${searchStats.totalSearches} | Books Added: ${searchStats.booksAdded} | Recent: ${recentSearches.slice(0, 3).join(', ') || 'None'}`;
+                        statsElement.innerHTML = `<i data-feather="activity"></i> Searches: ${searchStats.totalSearches} | <i data-feather="plus-circle"></i> Books Added: ${searchStats.booksAdded} | Recent: ${recentSearches.slice(0, 3).join(', ') || 'None'}`;
                     }
                 } else {
                     throw new Error(result.error || 'Failed to add book');

@@ -18,7 +18,7 @@
 - Real-time search results with book covers
 
 ### 🎨 **Premium Design**
-- Black, white, and gold luxury color scheme
+- Dark blue and teal professional color scheme
 - Mobile-responsive design
 - Smooth animations and hover effects
 - "Good Vibes Only" branding that matches your energy
@@ -186,7 +186,7 @@ You'll get a URL like: `https://sheri-book-finder.vercel.app`
 - ✅ **Urban/Romance/Vampire:** All genres well-represented
 - ✅ **TikTok Workflow:** Quick search and add
 - ✅ **Step-by-Step Process:** Clear phases, confirmation needed
-- ✅ **Premium Aesthetics:** Black, white, gold luxury theme
+- ✅ **Premium Aesthetics:** Dark blue, teal professional theme
 
 ---
 
