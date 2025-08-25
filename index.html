@@ -50,12 +50,26 @@
         }
 
         .search-section {
-            padding: 40px;
+            padding: 30px 40px 20px;
         }
 
         .search-box {
             position: relative;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+        }
+
+        .search-tips {
+            background: linear-gradient(135deg, #fff9e6, #ffffff);
+            border-left: 4px solid #d4af37;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .search-tips strong {
+            color: #d4af37;
         }
 
         .search-input {
@@ -100,18 +114,25 @@
         }
 
         .results {
-            margin-top: 30px;
+            margin-top: 20px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
         .book-card {
             display: flex;
             background: linear-gradient(135deg, #f8f8f8, #ffffff);
             border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             border: 2px solid #e5e5e5;
+            height: fit-content;
         }
 
         .book-card:hover {
@@ -121,11 +142,11 @@
         }
 
         .book-cover {
-            width: 120px;
-            height: 180px;
+            width: 80px;
+            height: 120px;
             background: #ddd;
-            border-radius: 10px;
-            margin-right: 20px;
+            border-radius: 8px;
+            margin-right: 15px;
             flex-shrink: 0;
             overflow: hidden;
         }
@@ -282,16 +303,20 @@
         }
 
         @media (max-width: 600px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
             .book-card {
-                flex-direction: column;
+                flex-direction: row;
+                padding: 12px;
             }
             
             .book-cover {
-                width: 100px;
-                height: 150px;
-                margin-right: 0;
-                margin-bottom: 15px;
-                align-self: center;
+                width: 70px;
+                height: 105px;
+                margin-right: 12px;
             }
             
             .header h1 {
@@ -300,6 +325,11 @@
             
             .search-section {
                 padding: 20px;
+            }
+            
+            .search-tips {
+                padding: 12px 15px;
+                font-size: 0.85em;
             }
         }
     </style>
@@ -322,6 +352,10 @@
                 >
                 <button class="search-btn" id="searchBtn">Search</button>
                 <div class="search-suggestions" id="searchSuggestions"></div>
+            </div>
+            
+            <div class="search-tips">
+                <strong>💡 Search Tips:</strong> Try "Maya Angelou", "vampire romance", "Book #1", or even just "mystery" for great results!
             </div>
             
             <div class="results" id="results"></div>
@@ -464,7 +498,9 @@
                 return;
             }
 
-            results.innerHTML = books.map(book => {
+            results.innerHTML = `
+                <div class="results-grid">
+                    ${books.map(book => {
                 const title = book.title || 'Unknown Title';
                 const authors = book.author_name ? book.author_name.join(', ') : 'Unknown Author';
                 const firstPublishYear = book.first_publish_year || 'Unknown';
@@ -490,7 +526,8 @@
                         </div>
                     </div>
                 `;
-            }).join('') + `
+                    }).join('')}
+                </div>
                 <div class="stats">
                     📊 Showing ${books.length} of ${total.toLocaleString()} results | Searches: ${searchStats.totalSearches} | Books Added: ${searchStats.booksAdded}
                 </div>
