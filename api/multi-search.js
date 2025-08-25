@@ -23,23 +23,93 @@ export default async function handler(req, res) {
     const searchPromises = [];
     const searchSources = sources === 'all' ? ['openlibrary', 'google'] : sources.split(',');
     
-    // Search Open Library
+    // Search Open Library directly
     if (searchSources.includes('openlibrary')) {
       searchPromises.push(
-        fetch(`${req.headers.origin || 'https://localhost:3000'}/api/search?q=${encodeURIComponent(q)}&limit=${limit}&offset=${offset}`)
-          .then(res => res.json())
-          .then(data => ({ source: 'openlibrary', data, success: true }))
-          .catch(err => ({ source: 'openlibrary', error: err.message, success: false }))
+        (async () => {
+          try {
+            const fields = [
+              'key', 'title', 'author_name', 'author_key',
+              'first_publish_year', 'edition_count', 'cover_i', 'subject',
+              'publisher', 'language', 'isbn', 'number_of_pages_median',
+              'ratings_count', 'readinglog_count', 'ebook_access', 
+              'has_fulltext', 'ia', 'place', 'time', 'person'
+            ].join(',');
+            
+            // Smart search: if it's likely an author name, search both ways
+            let searchQuery = q;
+            const words = q.trim().split(/\s+/);
+            if (words.length <= 3 && words.every(word => word.charAt(0).toUpperCase() === word.charAt(0))) {
+              // Likely an author name - search both ways
+              searchQuery = `${q} OR author:"${q}"`;
+            }
+            
+            const response = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(searchQuery)}&limit=${limit}&offset=${offset}&fields=${fields}`);
+            const data = await response.json();
+            return { source: 'openlibrary', data, success: true };
+          } catch (err) {
+            return { source: 'openlibrary', error: err.message, success: false };
+          }
+        })()
       );
     }
 
-    // Search Google Books
+    // Search Google Books directly
     if (searchSources.includes('google')) {
       searchPromises.push(
-        fetch(`${req.headers.origin || 'https://localhost:3000'}/api/google-books?q=${encodeURIComponent(q)}&limit=${limit}&offset=${offset}`)
-          .then(res => res.json())
-          .then(data => ({ source: 'google', data, success: true }))
-          .catch(err => ({ source: 'google', error: err.message, success: false }))
+        (async () => {
+          try {
+            const searchLimit = Math.min(parseInt(limit), 40);
+            const startIndex = parseInt(offset) || 0;
+            
+            const apiKey = process.env.GOOGLE_BOOKS_API_KEY || '';
+            const keyParam = apiKey ? `&key=${apiKey}` : '';
+            
+            const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${searchLimit}&startIndex=${startIndex}${keyParam}`);
+            const googleData = await response.json();
+            
+            // Transform Google Books format to match Open Library format
+            const transformedData = {
+              num_found: googleData.totalItems || 0,
+              start: startIndex,
+              docs: (googleData.items || []).map(item => {
+                const volumeInfo = item.volumeInfo || {};
+                const saleInfo = item.saleInfo || {};
+                
+                return {
+                  key: `/works/GB_${item.id}`,
+                  title: volumeInfo.title || 'Unknown Title',
+                  author_name: volumeInfo.authors || ['Unknown Author'],
+                  first_publish_year: volumeInfo.publishedDate ? parseInt(volumeInfo.publishedDate.substring(0, 4)) : null,
+                  publisher: volumeInfo.publisher ? [volumeInfo.publisher] : [],
+                  language: volumeInfo.language ? [volumeInfo.language] : ['en'],
+                  isbn: volumeInfo.industryIdentifiers ? 
+                    volumeInfo.industryIdentifiers.map(id => id.identifier) : [],
+                  number_of_pages_median: volumeInfo.pageCount || null,
+                  subject: volumeInfo.categories || [],
+                  cover_i: volumeInfo.imageLinks?.thumbnail ? 
+                    volumeInfo.imageLinks.thumbnail.replace('http:', 'https:') : null,
+                  ratings_count: volumeInfo.ratingsCount || 0,
+                  average_rating: volumeInfo.averageRating || 0,
+                  google_books_id: item.id,
+                  description: volumeInfo.description || null,
+                  buy_links: {
+                    google_play: saleInfo.buyLink || null,
+                    retail_price: saleInfo.retailPrice ? 
+                      `$${saleInfo.retailPrice.amount} ${saleInfo.retailPrice.currencyCode}` : null
+                  },
+                  preview_link: volumeInfo.previewLink || null,
+                  info_link: volumeInfo.infoLink || null,
+                  source: 'google_books'
+                };
+              })
+            };
+            
+            return { source: 'google', data: transformedData, success: true };
+          } catch (err) {
+            return { source: 'google', error: err.message, success: false };
+          }
+        })()
       );
     }
 
