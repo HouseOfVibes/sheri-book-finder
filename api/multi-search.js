@@ -72,7 +72,9 @@ export default async function handler(req, res) {
                 // Add Amazon search link for any book
                 amazon_search: `https://www.amazon.com/s?k=${encodeURIComponent(`${book.title} ${book.author_name?.[0] || ''}`)}&i=stripbooks`,
                 // Add Goodreads search link
-                goodreads_search: `https://www.goodreads.com/search?q=${encodeURIComponent(`${book.title} ${book.author_name?.[0] || ''}`)}`
+                goodreads_search: `https://www.goodreads.com/search?q=${encodeURIComponent(`${book.title} ${book.author_name?.[0] || ''}`)}`,
+                // Add Audible search link
+                audible_search: `https://www.audible.com/search?keywords=${encodeURIComponent(`${book.title} ${book.author_name?.[0] || ''}`)}`
               });
             }
           });
