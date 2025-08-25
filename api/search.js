@@ -23,7 +23,16 @@ export default async function handler(req, res) {
     const searchLimit = Math.min(parseInt(limit), 100); // Max 100 per request
     const searchOffset = parseInt(offset) || 0;
     
-    const response = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=${searchLimit}&offset=${searchOffset}`);
+    // Request additional fields for better database mapping
+    const fields = [
+      'key', 'title', 'author_name', 'author_key',
+      'first_publish_year', 'edition_count', 'cover_i', 'subject',
+      'publisher', 'language', 'isbn', 'number_of_pages_median',
+      'ratings_count', 'readinglog_count', 'ebook_access', 
+      'has_fulltext', 'ia', 'place', 'time', 'person'
+    ].join(',');
+    
+    const response = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=${searchLimit}&offset=${searchOffset}&fields=${fields}`);
     const data = await response.json();
     
     res.status(200).json(data);
