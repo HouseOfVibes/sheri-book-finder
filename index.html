@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sheri's Book Finder - Good Vibes Only</title>
     <meta name="description" content="Find and add books to your Notion catalog with one click. Search 3M+ books from Open Library.">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23667eea%22 stroke-width=%222%22><path d=%22M4 19.5A2.5 2.5 0 0 1 6.5 17H20%22/><path d=%22M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z%22/></svg>">
+    <link rel="icon" href="sheri's book finder logo.png" type="image/png">
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons@4.29.0/dist/feather.min.js"></script>
     <style>
@@ -41,20 +41,66 @@
             border-bottom: 1px solid #e5e7eb;
         }
 
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 700;
+        .logo-section {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-logo {
+            height: 80px;
+            width: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background: white;
+            padding: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            object-fit: contain;
+        }
+
+        .header-logo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-text {
+            text-align: left;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            font-weight: 700;
+            margin: 0;
         }
 
         .header p {
             font-size: 1.1em;
             opacity: 0.9;
             font-weight: 400;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .logo-section {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .header-text {
+                text-align: center;
+            }
+            
+            .header-logo {
+                height: 60px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
         }
 
         .search-section {
@@ -603,8 +649,13 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1><i data-feather="book-open"></i> Sheri's Book Finder</h1>
-            <p>GOOD VIBES ONLY - Find & Add Books That Bring the Energy!</p>
+            <div class="logo-section">
+                <img src="sheri's book finder logo.png" alt="Sheri's Book Finder" class="header-logo">
+                <div class="header-text">
+                    <h1>Sheri's Book Finder</h1>
+                    <p>GOOD VIBES ONLY - Find & Add Books That Bring the Energy!</p>
+                </div>
+            </div>
         </div>
         
         <div class="search-section">
