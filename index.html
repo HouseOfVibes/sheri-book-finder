@@ -150,6 +150,102 @@
             display: block;
         }
 
+        .chat-container {
+            background: #f8f8f8;
+            border-radius: 15px;
+            height: 400px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .ai-message, .user-message {
+            padding: 15px;
+            border-radius: 12px;
+            max-width: 85%;
+            line-height: 1.5;
+        }
+
+        .ai-message {
+            background: linear-gradient(135deg, #fff9e6, #ffffff);
+            border: 2px solid #d4af37;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #e8f4f8, #ffffff);
+            border: 2px solid #3498db;
+            align-self: flex-end;
+        }
+
+        .book-suggestion {
+            background: #fff;
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .book-suggestion:hover {
+            background: #fff9e6;
+            transform: translateY(-2px);
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 3px solid #e1e8ed;
+            border-radius: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+        }
+
+        .chat-btn {
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            color: #000000;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .chat-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
         .search-input {
             width: 100%;
             padding: 20px 60px 20px 20px;
@@ -421,8 +517,9 @@
         
         <div class="search-section">
             <div class="search-tabs">
-                <button class="search-tab active" onclick="switchTab('manual')">📚 Manual Search</button>
+                <button class="search-tab active" onclick="switchTab('manual')">📚 Multi-Search</button>
                 <button class="search-tab" onclick="switchTab('tiktok')">📱 From TikTok</button>
+                <button class="search-tab" onclick="switchTab('ai')">🤖 AI Chat</button>
             </div>
 
             <!-- Manual Search Mode -->
@@ -440,7 +537,7 @@
                 </div>
                 
                 <div class="search-tips">
-                    <strong>💡 Search Tips:</strong> Try "Maya Angelou", "vampire romance", "Book #1", or even just "mystery" for great results!
+                    <strong>🔥 Multi-Source Search:</strong> Searches Open Library + Google Books simultaneously! Try "Granger", "Maya Angelou", "vampire romance", or any author/title.
                 </div>
             </div>
 
@@ -458,6 +555,32 @@
                     <strong>🎬 TikTok Tips:</strong> Works with book reviews, recommendations, hauls, and "what I'm reading" videos!
                 </div>
             </div>
+
+            <!-- AI Chat Mode -->
+            <div class="search-mode" id="aiMode">
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="ai-message">
+                            <strong>🤖 Sheri's Book AI:</strong> Hey! I'm here to help you discover amazing books with good vibes only! ✨<br><br>
+                            Tell me what you're in the mood for - like "cozy mystery for winter reading" or "fantasy with strong female leads" or just "surprise me with something feel-good!"
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <input 
+                        type="text" 
+                        class="chat-input" 
+                        placeholder="What kind of books are you in the mood for? 🌟"
+                        id="chatInput"
+                    >
+                    <button class="chat-btn" id="chatBtn">Send</button>
+                </div>
+                
+                <div class="search-tips">
+                    <strong>💬 AI Tips:</strong> Ask for recommendations by mood, genre, or situation - like "books for a beach vacation" or "something to make me cry happy tears"!
+                </div>
+            </div>
             
             <div class="results" id="results"></div>
         </div>
@@ -470,6 +593,9 @@
         const searchSuggestions = document.getElementById('searchSuggestions');
         const tiktokInput = document.getElementById('tiktokInput');
         const tiktokBtn = document.getElementById('tiktokBtn');
+        const chatInput = document.getElementById('chatInput');
+        const chatBtn = document.getElementById('chatBtn');
+        const chatMessages = document.getElementById('chatMessages');
         
         // Recent searches storage
         let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
@@ -480,6 +606,9 @@
         let currentOffset = 0;
         let totalResults = 0;
         let allBooks = [];
+        
+        // Chat state
+        let conversationHistory = [];
 
         // Tab switching function
         function switchTab(tab) {
@@ -600,6 +729,93 @@
             searchBooks();
         }
 
+        // Gemini AI Chat Functions
+        async function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Add user message to chat
+            const userDiv = document.createElement('div');
+            userDiv.className = 'user-message';
+            userDiv.innerHTML = `<strong>You:</strong> ${message}`;
+            chatMessages.appendChild(userDiv);
+            
+            // Clear input and disable
+            chatInput.value = '';
+            chatBtn.disabled = true;
+            chatBtn.textContent = 'Thinking...';
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch('/api/gemini-chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        message: message,
+                        conversation_history: conversationHistory 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Add AI response
+                    const aiDiv = document.createElement('div');
+                    aiDiv.className = 'ai-message';
+                    aiDiv.innerHTML = `<strong>🤖 Sheri's Book AI:</strong> ${data.response}`;
+                    chatMessages.appendChild(aiDiv);
+                    
+                    // Add extracted books as clickable suggestions
+                    if (data.extracted_books && data.extracted_books.length > 0) {
+                        const suggestionsDiv = document.createElement('div');
+                        suggestionsDiv.innerHTML = data.extracted_books.map(book => 
+                            `<div class="book-suggestion" onclick="searchFromAI('${book.title} ${book.author}')">
+                                <strong>"${book.title}"</strong> by ${book.author} 
+                                <small style="color: #d4af37;">→ Click to search</small>
+                            </div>`
+                        ).join('');
+                        aiDiv.appendChild(suggestionsDiv);
+                    }
+                    
+                    // Update conversation history
+                    conversationHistory.push({
+                        human: message,
+                        assistant: data.response
+                    });
+                    
+                    // Keep only last 10 exchanges
+                    if (conversationHistory.length > 10) {
+                        conversationHistory = conversationHistory.slice(-10);
+                    }
+                } else {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'ai-message';
+                    errorDiv.innerHTML = `<strong>🤖 Sheri's Book AI:</strong> ${data.fallback_response || "Sorry, I'm having trouble right now. Try asking about specific genres or authors you like!"}`;
+                    chatMessages.appendChild(errorDiv);
+                }
+                
+            } catch (error) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'ai-message';
+                errorDiv.innerHTML = `<strong>🤖 Sheri's Book AI:</strong> Oops! I'm having connection issues. Try searching manually or ask me again in a moment! 💫`;
+                chatMessages.appendChild(errorDiv);
+            } finally {
+                chatBtn.disabled = false;
+                chatBtn.textContent = 'Send';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        function searchFromAI(bookInfo) {
+            switchTab('manual');
+            searchInput.value = bookInfo;
+            searchBooks();
+        }
+
         // Show recent searches
         function showSuggestions() {
             if (recentSearches.length === 0) {
@@ -677,8 +893,8 @@
             }
 
             try {
-                // Use your Vercel API endpoint with pagination
-                const response = await fetch(`/api/search?q=${encodeURIComponent(currentQuery)}&limit=20&offset=${currentOffset}`);
+                // Use multi-search API endpoint for better results
+                const response = await fetch(`/api/multi-search?q=${encodeURIComponent(currentQuery)}&limit=20&offset=${currentOffset}`);
                 const data = await response.json();
                 
                 if (response.ok) {
@@ -833,6 +1049,13 @@
         tiktokInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 parseTikTok();
+            }
+        });
+
+        chatBtn.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
             }
         });
 
