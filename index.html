@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sheri's Book Finder - Good Vibes Only</title>
     <meta name="description" content="Find and add books to your Notion catalog with one click. Search 3M+ books from Open Library.">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23667eea%22 stroke-width=%222%22><path d=%22M4 19.5A2.5 2.5 0 0 1 6.5 17H20%22/><path d=%22M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z%22/></svg>">
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons@4.29.0/dist/feather.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,38 +17,44 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            background: #f8fafc;
             min-height: 100vh;
             padding: 20px;
+            color: #374151;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             overflow: hidden;
-            border: 2px solid #d4af37;
+            border: 1px solid #e5e7eb;
         }
 
         .header {
-            background: linear-gradient(135deg, #000000, #333333);
-            color: #d4af37;
-            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px 30px;
             text-align: center;
-            border-bottom: 3px solid #d4af37;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
         }
 
         .header p {
             font-size: 1.1em;
             opacity: 0.9;
+            font-weight: 400;
         }
 
         .search-section {
@@ -74,10 +82,11 @@
 
         .search-tabs {
             display: flex;
-            margin-bottom: 20px;
-            background: #f0f0f0;
+            margin-bottom: 24px;
+            background: #f1f5f9;
             border-radius: 12px;
-            padding: 4px;
+            padding: 6px;
+            border: 1px solid #e2e8f0;
         }
 
         .search-tab {
@@ -93,9 +102,9 @@
         }
 
         .search-tab.active {
-            background: linear-gradient(135deg, #d4af37, #b8941f);
-            color: #000;
-            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+            background: white;
+            color: #3b82f6;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .search-tab:hover:not(.active) {
@@ -266,14 +275,18 @@
             right: 10px;
             top: 50%;
             transform: translateY(-50%);
-            background: linear-gradient(135deg, #d4af37, #b8941f);
-            color: #000000;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
             border: none;
             padding: 12px 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
         .search-btn:hover {
@@ -511,15 +524,21 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Sheri's Book Finder</h1>
+            <h1><i data-feather="book-open"></i> Sheri's Book Finder</h1>
             <p>GOOD VIBES ONLY - Find & Add Books That Bring the Energy!</p>
         </div>
         
         <div class="search-section">
             <div class="search-tabs">
-                <button class="search-tab active" onclick="switchTab('manual')">Multi-Search</button>
-                <button class="search-tab" onclick="switchTab('tiktok')">From TikTok</button>
-                <button class="search-tab" onclick="switchTab('ai')">AI Chat</button>
+                <button class="search-tab active" onclick="switchTab('manual')">
+                    <i data-feather="search"></i> Multi-Search
+                </button>
+                <button class="search-tab" onclick="switchTab('tiktok')">
+                    <i data-feather="video"></i> From TikTok
+                </button>
+                <button class="search-tab" onclick="switchTab('ai')">
+                    <i data-feather="message-circle"></i> AI Chat
+                </button>
             </div>
 
             <!-- Manual Search Mode -->
@@ -942,18 +961,13 @@
                                 </a>
                                 <a href="${externalSuggestions.goodreads_author_search}" target="_blank" 
                                    style="padding: 10px 15px; background: #663399; color: white; text-decoration: none; border-radius: 5px; text-align: center;">
-                                   Search on Goodreads
+                                   <i data-feather="star" style="width: 16px; height: 16px; margin-right: 6px;"></i> Search on Goodreads
+                                </a>
+                                <a href="${externalSuggestions.amazon_books_search}" target="_blank" 
+                                   style="padding: 10px 15px; background: #232F3E; color: white; text-decoration: none; border-radius: 5px; text-align: center;">
+                                   <i data-feather="shopping-cart" style="width: 16px; height: 16px; margin-right: 6px;"></i> Browse on Amazon
                                 </a>
                     `;
-                    
-                    if (externalSuggestions.author_instagram) {
-                        noResultsHTML += `
-                                <a href="${externalSuggestions.author_instagram}" target="_blank" 
-                                   style="padding: 10px 15px; background: #E4405F; color: white; text-decoration: none; border-radius: 5px; text-align: center;">
-                                   Follow Author on Instagram
-                                </a>
-                        `;
-                    }
                     
                     noResultsHTML += `
                             </div>
@@ -963,7 +977,8 @@
                 
                 noResultsHTML += `
                         <div class="stats">
-                            Total searches: ${searchStats.totalSearches} | Books added: ${searchStats.booksAdded}
+                            <i data-feather="activity"></i> Total searches: ${searchStats.totalSearches} | 
+                            <i data-feather="plus-circle"></i> Books added: ${searchStats.booksAdded}
                         </div>
                     </div>
                 `;
@@ -994,7 +1009,7 @@
                                 ${editionCount} edition${editionCount !== 1 ? 's' : ''} available
                             </div>
                             <button class="add-btn" onclick="addToNotion('${encodeURIComponent(JSON.stringify(book))}')">
-                                Add to My Catalog
+                                <i data-feather="plus"></i> Add to My Catalog
                             </button>
                         </div>
                     </div>
@@ -1112,6 +1127,19 @@
 
         // Auto-focus on load
         searchInput.focus();
+    </script>
+    
+    <script>
+        // Initialize Feather icons
+        feather.replace();
+        
+        // Re-initialize icons after dynamic content updates
+        const originalDisplayResults = displayResults;
+        displayResults = function(...args) {
+            const result = originalDisplayResults.apply(this, args);
+            setTimeout(() => feather.replace(), 10);
+            return result;
+        };
     </script>
 </body>
 </html>

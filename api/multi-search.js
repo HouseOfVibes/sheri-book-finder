@@ -106,7 +106,7 @@ export default async function handler(req, res) {
     const externalSuggestions = allBooks.length === 0 ? {
       amazon_author_search: `https://www.amazon.com/s?i=digital-text&rh=p_27%3A${encodeURIComponent(q)}&ref=dp_byline_sr_ebooks_1`,
       goodreads_author_search: `https://www.goodreads.com/search?q=${encodeURIComponent(q)}&search_type=author`,
-      author_instagram: q.toLowerCase() === 'granger' ? 'https://www.instagram.com/authorgranger/' : null
+      amazon_books_search: `https://www.amazon.com/s?k=${encodeURIComponent(q)}&i=stripbooks&ref=nb_sb_noss`
     } : null;
 
     res.status(200).json({
