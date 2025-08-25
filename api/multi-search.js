@@ -102,14 +102,22 @@ export default async function handler(req, res) {
       return ratingsB - ratingsA;
     });
 
+    // Add external search suggestions when no results found
+    const externalSuggestions = allBooks.length === 0 ? {
+      amazon_author_search: `https://www.amazon.com/s?i=digital-text&rh=p_27%3A${encodeURIComponent(q)}&ref=dp_byline_sr_ebooks_1`,
+      goodreads_author_search: `https://www.goodreads.com/search?q=${encodeURIComponent(q)}&search_type=author`,
+      author_instagram: q.toLowerCase() === 'granger' ? 'https://www.instagram.com/authorgranger/' : null
+    } : null;
+
     res.status(200).json({
       num_found: totalFound,
       start: parseInt(offset) || 0,
       docs: allBooks,
       sources: sourceInfo,
       search_query: q,
+      external_suggestions: externalSuggestions,
       message: allBooks.length === 0 ? 
-        "No books found. Try different keywords or check the AI chat for personalized recommendations!" :
+        "No books found in major databases. Try the external search links below or check our AI chat for recommendations!" :
         `Found ${allBooks.length} books from ${Object.keys(sourceInfo).filter(s => sourceInfo[s].status === 'success').join(' + ')}`
     });
 

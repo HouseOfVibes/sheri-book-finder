@@ -903,7 +903,7 @@
                     allBooks = [...allBooks, ...newBooks];
                     currentOffset += newBooks.length;
                     
-                    displayResults(allBooks, totalResults);
+                    displayResults(allBooks, totalResults, data.external_suggestions);
                 } else {
                     throw new Error(data.error || 'Search failed');
                 }
@@ -923,16 +923,51 @@
             }
         }
 
-        function displayResults(books, total = 0) {
+        function displayResults(books, total = 0, externalSuggestions = null) {
             if (books.length === 0) {
-                results.innerHTML = `
+                let noResultsHTML = `
                     <div class="loading">
                         <p>No books found. Try searching with different keywords!</p>
+                `;
+                
+                // Add external search suggestions if available
+                if (externalSuggestions) {
+                    noResultsHTML += `
+                        <div style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                            <h4 style="margin-bottom: 15px; color: #333;">Try searching external platforms:</h4>
+                            <div style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
+                                <a href="${externalSuggestions.amazon_author_search}" target="_blank" 
+                                   style="padding: 10px 15px; background: #FF9900; color: white; text-decoration: none; border-radius: 5px; text-align: center;">
+                                   Search on Amazon
+                                </a>
+                                <a href="${externalSuggestions.goodreads_author_search}" target="_blank" 
+                                   style="padding: 10px 15px; background: #663399; color: white; text-decoration: none; border-radius: 5px; text-align: center;">
+                                   Search on Goodreads
+                                </a>
+                    `;
+                    
+                    if (externalSuggestions.author_instagram) {
+                        noResultsHTML += `
+                                <a href="${externalSuggestions.author_instagram}" target="_blank" 
+                                   style="padding: 10px 15px; background: #E4405F; color: white; text-decoration: none; border-radius: 5px; text-align: center;">
+                                   Follow Author on Instagram
+                                </a>
+                        `;
+                    }
+                    
+                    noResultsHTML += `
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                noResultsHTML += `
                         <div class="stats">
-                            📊 Total searches: ${searchStats.totalSearches} | Books added: ${searchStats.booksAdded}
+                            Total searches: ${searchStats.totalSearches} | Books added: ${searchStats.booksAdded}
                         </div>
                     </div>
                 `;
+                results.innerHTML = noResultsHTML;
                 return;
             }
 
