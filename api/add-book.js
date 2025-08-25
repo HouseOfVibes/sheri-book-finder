@@ -192,11 +192,11 @@ export default async function handler(req, res) {
     if (editionCount > 1) summaryParts.push(`${editionCount} editions`);
     if (publisher) summaryParts.push(`Publisher: ${publisher}`);
     if (language && language !== 'EN') summaryParts.push(`Language: ${language}`);
-    if (ratingsCount > 0) summaryParts.push(`⭐ ${ratingsCount} ratings`);
-    if (readinglogCount > 0) summaryParts.push(`📚 ${readinglogCount} reading logs`);
-    if (hasEbook) summaryParts.push(`📖 Ebook available`);
-    if (hasFullText) summaryParts.push(`📄 Full text available`);
-    if (internetArchiveId) summaryParts.push(`🏛️ Archive: ${internetArchiveId}`);
+    if (ratingsCount > 0) summaryParts.push(`${ratingsCount} ratings`);
+    if (readinglogCount > 0) summaryParts.push(`${readinglogCount} reading logs`);
+    if (hasEbook) summaryParts.push(`Ebook available`);
+    if (hasFullText) summaryParts.push(`Full text available`);
+    if (internetArchiveId) summaryParts.push(`Archive: ${internetArchiveId}`);
     
     if (summaryParts.length > 0) {
       properties['Summary'] = {
@@ -232,7 +232,7 @@ export default async function handler(req, res) {
 
     res.status(200).json({ 
       success: true, 
-      message: 'Book added to your catalog successfully! 🔥',
+      message: 'Book added to your catalog successfully',
       pageId: response.id 
     });
 

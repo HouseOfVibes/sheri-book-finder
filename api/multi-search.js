@@ -109,7 +109,7 @@ export default async function handler(req, res) {
       sources: sourceInfo,
       search_query: q,
       message: allBooks.length === 0 ? 
-        "No books found. Try different keywords or check the Gemini AI chat for personalized recommendations!" :
+        "No books found. Try different keywords or check the AI chat for personalized recommendations!" :
         `Found ${allBooks.length} books from ${Object.keys(sourceInfo).filter(s => sourceInfo[s].status === 'success').join(' + ')}`
     });
 

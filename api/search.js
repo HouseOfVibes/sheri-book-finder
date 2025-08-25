@@ -32,7 +32,15 @@ export default async function handler(req, res) {
       'has_fulltext', 'ia', 'place', 'time', 'person'
     ].join(',');
     
-    const response = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=${searchLimit}&offset=${searchOffset}&fields=${fields}`);
+    // Smart search: if it's likely an author name, search by author
+    let searchQuery = q;
+    const words = q.trim().split(/\s+/);
+    if (words.length <= 3 && words.every(word => word.charAt(0).toUpperCase() === word.charAt(0))) {
+      // Likely an author name - search both ways
+      searchQuery = `${q} OR author:"${q}"`;
+    }
+    
+    const response = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(searchQuery)}&limit=${searchLimit}&offset=${searchOffset}&fields=${fields}`);
     const data = await response.json();
     
     res.status(200).json(data);

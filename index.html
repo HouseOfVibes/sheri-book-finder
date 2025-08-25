@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 Sheri's Book Finder - Good Vibes Only</title>
+    <title>Sheri's Book Finder - Good Vibes Only</title>
     <meta name="description" content="Find and add books to your Notion catalog with one click. Search 3M+ books from Open Library.">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
     <style>
         * {
             margin: 0;
@@ -511,15 +511,15 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📚 Sheri's Book Finder</h1>
-            <p>🔥 GOOD VIBES ONLY - Find & Add Books That Bring the Energy! 💪</p>
+            <h1>Sheri's Book Finder</h1>
+            <p>GOOD VIBES ONLY - Find & Add Books That Bring the Energy!</p>
         </div>
         
         <div class="search-section">
             <div class="search-tabs">
-                <button class="search-tab active" onclick="switchTab('manual')">📚 Multi-Search</button>
-                <button class="search-tab" onclick="switchTab('tiktok')">📱 From TikTok</button>
-                <button class="search-tab" onclick="switchTab('ai')">🤖 AI Chat</button>
+                <button class="search-tab active" onclick="switchTab('manual')">Multi-Search</button>
+                <button class="search-tab" onclick="switchTab('tiktok')">From TikTok</button>
+                <button class="search-tab" onclick="switchTab('ai')">AI Chat</button>
             </div>
 
             <!-- Manual Search Mode -->
@@ -537,7 +537,7 @@
                 </div>
                 
                 <div class="search-tips">
-                    <strong>🔥 Multi-Source Search:</strong> Searches Open Library + Google Books simultaneously! Try "Granger", "Maya Angelou", "vampire romance", or any author/title.
+                    <strong>Multi-Source Search:</strong> Searches Open Library + Google Books simultaneously! Try "Granger", "Maya Angelou", "vampire romance", or any author/title.
                 </div>
             </div>
 
@@ -561,7 +561,7 @@
                 <div class="chat-container" id="chatContainer">
                     <div class="chat-messages" id="chatMessages">
                         <div class="ai-message">
-                            <strong>🤖 Sheri's Book AI:</strong> Hey! I'm here to help you discover amazing books with good vibes only! ✨<br><br>
+                            <strong>Sheri's Book AI:</strong> Hey! I'm here to help you discover amazing books with good vibes only!<br><br>
                             Tell me what you're in the mood for - like "cozy mystery for winter reading" or "fantasy with strong female leads" or just "surprise me with something feel-good!"
                         </div>
                     </div>
@@ -955,11 +955,11 @@
                             <div class="book-title">${title}</div>
                             <div class="book-author">by ${authors}</div>
                             <div class="book-details">
-                                📅 First Published: ${firstPublishYear}<br>
-                                📖 ${editionCount} edition${editionCount !== 1 ? 's' : ''} available
+                                First Published: ${firstPublishYear}<br>
+                                ${editionCount} edition${editionCount !== 1 ? 's' : ''} available
                             </div>
                             <button class="add-btn" onclick="addToNotion('${encodeURIComponent(JSON.stringify(book))}')">
-                                ✨ Add to My Catalog
+                                Add to My Catalog
                             </button>
                         </div>
                     </div>
@@ -972,7 +972,7 @@
                 ${books.length < total ? `
                     <div style="text-align: center; padding: 20px;">
                         <button class="search-btn" onclick="loadMoreBooks()" style="position: static; transform: none; padding: 15px 30px;">
-                            📚 Load More Books (${Math.min(20, total - books.length)} more)
+                            Load More Books (${Math.min(20, total - books.length)} more)
                         </button>
                     </div>
                 ` : ''}
@@ -1018,7 +1018,7 @@
                     
                     // Update stats and show toast
                     updateStats('book');
-                    showToast(`🔥 SUCCESS! "${book.title}" added to your catalog!`, 'success');
+                    showToast(`SUCCESS! "${book.title}" added to your catalog!`, 'success');
                     
                     // Update stats display
                     const statsElement = document.querySelector('.stats');
