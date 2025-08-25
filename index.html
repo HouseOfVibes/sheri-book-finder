@@ -337,6 +337,12 @@
         // Recent searches storage
         let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
         let searchStats = JSON.parse(localStorage.getItem('searchStats') || '{"totalSearches": 0, "booksAdded": 0}');
+        
+        // Search state
+        let currentQuery = '';
+        let currentOffset = 0;
+        let totalResults = 0;
+        let allBooks = [];
 
         // Show recent searches
         function showSuggestions() {
@@ -387,33 +393,45 @@
         }
 
         // Search functionality using your Vercel API
-        async function searchBooks() {
+        async function searchBooks(isLoadMore = false) {
             const query = searchInput.value.trim();
             if (!query) return;
 
-            searchBtn.disabled = true;
-            searchBtn.textContent = 'Searching...';
-            hideSuggestions();
-            
-            // Add to recent searches
-            addToRecentSearches(query);
-            updateStats('search');
-            
-            // Show loading
-            results.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p>Searching Open Library for "${query}"...</p>
-                </div>
-            `;
+            if (!isLoadMore) {
+                // New search
+                currentQuery = query;
+                currentOffset = 0;
+                allBooks = [];
+                
+                searchBtn.disabled = true;
+                searchBtn.textContent = 'Searching...';
+                hideSuggestions();
+                
+                // Add to recent searches
+                addToRecentSearches(query);
+                updateStats('search');
+                
+                // Show loading
+                results.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Searching Open Library for "${query}"...</p>
+                    </div>
+                `;
+            }
 
             try {
-                // Use your Vercel API endpoint
-                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                // Use your Vercel API endpoint with pagination
+                const response = await fetch(`/api/search?q=${encodeURIComponent(currentQuery)}&limit=20&offset=${currentOffset}`);
                 const data = await response.json();
                 
                 if (response.ok) {
-                    displayResults(data.docs || []);
+                    totalResults = data.num_found || 0;
+                    const newBooks = data.docs || [];
+                    allBooks = [...allBooks, ...newBooks];
+                    currentOffset += newBooks.length;
+                    
+                    displayResults(allBooks, totalResults);
                 } else {
                     throw new Error(data.error || 'Search failed');
                 }
@@ -426,12 +444,14 @@
                     </div>
                 `;
             } finally {
-                searchBtn.disabled = false;
-                searchBtn.textContent = 'Search';
+                if (!isLoadMore) {
+                    searchBtn.disabled = false;
+                    searchBtn.textContent = 'Search';
+                }
             }
         }
 
-        function displayResults(books) {
+        function displayResults(books, total = 0) {
             if (books.length === 0) {
                 results.innerHTML = `
                     <div class="loading">
@@ -472,9 +492,28 @@
                 `;
             }).join('') + `
                 <div class="stats">
-                    📊 Searches: ${searchStats.totalSearches} | Books Added: ${searchStats.booksAdded} | Recent: ${recentSearches.slice(0, 3).join(', ') || 'None'}
+                    📊 Showing ${books.length} of ${total.toLocaleString()} results | Searches: ${searchStats.totalSearches} | Books Added: ${searchStats.booksAdded}
                 </div>
+                ${books.length < total ? `
+                    <div style="text-align: center; padding: 20px;">
+                        <button class="search-btn" onclick="loadMoreBooks()" style="position: static; transform: none; padding: 15px 30px;">
+                            📚 Load More Books (${Math.min(20, total - books.length)} more)
+                        </button>
+                    </div>
+                ` : ''}
             `;
+        }
+
+        async function loadMoreBooks() {
+            const loadMoreBtn = event.target;
+            loadMoreBtn.disabled = true;
+            loadMoreBtn.textContent = 'Loading...';
+            
+            try {
+                await searchBooks(true); // isLoadMore = true
+            } finally {
+                // Button will be updated by displayResults
+            }
         }
 
         async function addToNotion(encodedBook) {
