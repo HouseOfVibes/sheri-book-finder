@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Sheri's Book Finder - Good Vibes Only</title>
+    <meta name="description" content="Find and add books to your Notion catalog with one click. Search 3M+ books from Open Library.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+            border: 2px solid #d4af37;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #000000, #333333);
+            color: #d4af37;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 3px solid #d4af37;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .search-section {
+            padding: 40px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 20px 60px 20px 20px;
+            font-size: 18px;
+            border: 3px solid #e1e8ed;
+            border-radius: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            color: #000000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: translateY(-50%) scale(1);
+        }
+
+        .results {
+            margin-top: 30px;
+        }
+
+        .book-card {
+            display: flex;
+            background: linear-gradient(135deg, #f8f8f8, #ffffff);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid #e5e5e5;
+        }
+
+        .book-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+        }
+
+        .book-cover {
+            width: 120px;
+            height: 180px;
+            background: #ddd;
+            border-radius: 10px;
+            margin-right: 20px;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .book-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .book-author {
+            font-size: 1.1em;
+            color: #333333;
+            margin-bottom: 15px;
+        }
+
+        .book-details {
+            font-size: 0.9em;
+            color: #666666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            color: #000000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+            margin-top: auto;
+            border: 1px solid #b8941f;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, #e6c547, #d4af37);
+        }
+
+        .add-btn:disabled {
+            background: #999999;
+            cursor: not-allowed;
+            transform: scale(1);
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #333333;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e1e8ed;
+            border-top: 4px solid #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .setup-notice {
+            background: linear-gradient(135deg, #fff9e6, #ffffff);
+            border: 2px solid #d4af37;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: #333333;
+        }
+
+        .setup-notice h3 {
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e1e8ed;
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+
+        .suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-item:hover {
+            background: #f8f8f8;
+            color: #d4af37;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .stats {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            .book-card {
+                flex-direction: column;
+            }
+            
+            .book-cover {
+                width: 100px;
+                height: 150px;
+                margin-right: 0;
+                margin-bottom: 15px;
+                align-self: center;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .search-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Sheri's Book Finder</h1>
+            <p>🔥 GOOD VIBES ONLY - Find & Add Books That Bring the Energy! 💪</p>
+        </div>
+        
+        <div class="search-section">
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    placeholder="Search by title, author, or even partial info... 🔍"
+                    id="searchInput"
+                    autocomplete="off"
+                >
+                <button class="search-btn" id="searchBtn">Search</button>
+                <div class="search-suggestions" id="searchSuggestions"></div>
+            </div>
+            
+            <div class="results" id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const results = document.getElementById('results');
+        const searchSuggestions = document.getElementById('searchSuggestions');
+        
+        // Recent searches storage
+        let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+        let searchStats = JSON.parse(localStorage.getItem('searchStats') || '{"totalSearches": 0, "booksAdded": 0}');
+
+        // Show recent searches
+        function showSuggestions() {
+            if (recentSearches.length === 0) {
+                searchSuggestions.style.display = 'none';
+                return;
+            }
+            
+            searchSuggestions.innerHTML = recentSearches
+                .slice(0, 5)
+                .map(search => `<div class="suggestion-item" onclick="selectSuggestion('${search}')">${search}</div>`)
+                .join('');
+            searchSuggestions.style.display = 'block';
+        }
+        
+        function selectSuggestion(suggestion) {
+            searchInput.value = suggestion;
+            hideSuggestions();
+            searchBooks();
+        }
+        
+        function hideSuggestions() {
+            searchSuggestions.style.display = 'none';
+        }
+        
+        function addToRecentSearches(query) {
+            recentSearches = [query, ...recentSearches.filter(s => s !== query)].slice(0, 10);
+            localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+        }
+        
+        function updateStats(type) {
+            if (type === 'search') searchStats.totalSearches++;
+            if (type === 'book') searchStats.booksAdded++;
+            localStorage.setItem('searchStats', JSON.stringify(searchStats));
+        }
+        
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Search functionality using your Vercel API
+        async function searchBooks() {
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            searchBtn.disabled = true;
+            searchBtn.textContent = 'Searching...';
+            hideSuggestions();
+            
+            // Add to recent searches
+            addToRecentSearches(query);
+            updateStats('search');
+            
+            // Show loading
+            results.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Searching Open Library for "${query}"...</p>
+                </div>
+            `;
+
+            try {
+                // Use your Vercel API endpoint
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayResults(data.docs || []);
+                } else {
+                    throw new Error(data.error || 'Search failed');
+                }
+                
+            } catch (error) {
+                results.innerHTML = `
+                    <div class="loading">
+                        <p style="color: #e74c3c;">Oops! Something went wrong. Please try again.</p>
+                        <p style="color: #666666; font-size: 0.9em;">Error: ${error.message}</p>
+                    </div>
+                `;
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.textContent = 'Search';
+            }
+        }
+
+        function displayResults(books) {
+            if (books.length === 0) {
+                results.innerHTML = `
+                    <div class="loading">
+                        <p>No books found. Try searching with different keywords!</p>
+                        <div class="stats">
+                            📊 Total searches: ${searchStats.totalSearches} | Books added: ${searchStats.booksAdded}
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            results.innerHTML = books.map(book => {
+                const title = book.title || 'Unknown Title';
+                const authors = book.author_name ? book.author_name.join(', ') : 'Unknown Author';
+                const firstPublishYear = book.first_publish_year || 'Unknown';
+                const editionCount = book.edition_count || 0;
+                const coverId = book.cover_i;
+                const coverUrl = coverId ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg` : '';
+                
+                return `
+                    <div class="book-card">
+                        <div class="book-cover">
+                            ${coverUrl ? `<img src="${coverUrl}" alt="${title}" onerror="this.style.display='none'">` : ''}
+                        </div>
+                        <div class="book-info">
+                            <div class="book-title">${title}</div>
+                            <div class="book-author">by ${authors}</div>
+                            <div class="book-details">
+                                📅 First Published: ${firstPublishYear}<br>
+                                📖 ${editionCount} edition${editionCount !== 1 ? 's' : ''} available
+                            </div>
+                            <button class="add-btn" onclick="addToNotion('${encodeURIComponent(JSON.stringify(book))}')">
+                                ✨ Add to My Catalog
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('') + `
+                <div class="stats">
+                    📊 Searches: ${searchStats.totalSearches} | Books Added: ${searchStats.booksAdded} | Recent: ${recentSearches.slice(0, 3).join(', ') || 'None'}
+                </div>
+            `;
+        }
+
+        async function addToNotion(encodedBook) {
+            const book = JSON.parse(decodeURIComponent(encodedBook));
+            
+            // Find the button that was clicked and disable it
+            const button = event.target;
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Adding...';
+            
+            try {
+                const response = await fetch('/api/add-book', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ book })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    button.textContent = '✅ Added!';
+                    button.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
+                    button.style.color = 'white';
+                    
+                    // Update stats and show toast
+                    updateStats('book');
+                    showToast(`🔥 SUCCESS! "${book.title}" added to your catalog!`, 'success');
+                    
+                    // Update stats display
+                    const statsElement = document.querySelector('.stats');
+                    if (statsElement) {
+                        statsElement.innerHTML = `📊 Searches: ${searchStats.totalSearches} | Books Added: ${searchStats.booksAdded} | Recent: ${recentSearches.slice(0, 3).join(', ') || 'None'}`;
+                    }
+                } else {
+                    throw new Error(result.error || 'Failed to add book');
+                }
+                
+            } catch (error) {
+                button.disabled = false;
+                button.textContent = originalText;
+                alert(`❌ Error adding book: ${error.message}`);
+                console.error('Add book error:', error);
+            }
+        }
+
+        // Event listeners
+        searchBtn.addEventListener('click', searchBooks);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchBooks();
+            }
+        });
+
+        searchInput.addEventListener('focus', showSuggestions);
+        searchInput.addEventListener('input', (e) => {
+            if (e.target.value.trim() === '') {
+                showSuggestions();
+            } else {
+                hideSuggestions();
+            }
+        });
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-box')) {
+                hideSuggestions();
+            }
+        });
+
+        // Auto-focus on load
+        searchInput.focus();
+    </script>
+</body>
+</html>
