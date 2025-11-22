@@ -659,54 +659,55 @@
         </div>
         
         <div class="search-section">
-            <div class="search-tabs">
-                <button class="search-tab active" onclick="switchTab('manual')">
-                    <i data-feather="search"></i> Multi-Search
+            <div class="search-tabs" role="tablist" aria-label="Search methods">
+                <button class="search-tab active" onclick="switchTab('manual')" role="tab" aria-selected="true" aria-controls="manualMode">
+                    <i data-feather="search" aria-hidden="true"></i> Multi-Search
                 </button>
-                <button class="search-tab" onclick="switchTab('tiktok')">
-                    <i data-feather="video"></i> From TikTok
+                <button class="search-tab" onclick="switchTab('tiktok')" role="tab" aria-selected="false" aria-controls="tiktokMode">
+                    <i data-feather="video" aria-hidden="true"></i> From TikTok
                 </button>
-                <button class="search-tab" onclick="switchTab('ai')">
-                    <i data-feather="message-circle"></i> AI Chat
+                <button class="search-tab" onclick="switchTab('ai')" role="tab" aria-selected="false" aria-controls="aiMode">
+                    <i data-feather="message-circle" aria-hidden="true"></i> AI Chat
                 </button>
             </div>
 
             <!-- Manual Search Mode -->
-            <div class="search-mode active" id="manualMode">
+            <div class="search-mode active" id="manualMode" role="tabpanel" aria-labelledby="manual-tab">
                 <div class="search-fields-container">
                     <div class="search-field-group">
                         <label for="titleInput" class="search-label">
-                            <i data-feather="book"></i> Book Title
+                            <i data-feather="book" aria-hidden="true"></i> Book Title
                         </label>
-                        <input type="text" id="titleInput" placeholder="Enter book title..." maxlength="100" class="search-field-input" autocomplete="off">
+                        <input type="text" id="titleInput" placeholder="Enter book title..." maxlength="100" class="search-field-input" autocomplete="off" aria-describedby="search-tips">
                     </div>
-                    
+
                     <div class="search-field-group">
                         <label for="authorInput" class="search-label">
-                            <i data-feather="user"></i> Author Name
+                            <i data-feather="user" aria-hidden="true"></i> Author Name
                         </label>
-                        <input type="text" id="authorInput" placeholder="Enter author name..." maxlength="100" class="search-field-input" autocomplete="off">
+                        <input type="text" id="authorInput" placeholder="Enter author name..." maxlength="100" class="search-field-input" autocomplete="off" aria-describedby="search-tips">
                     </div>
-                    
-                    <button class="search-btn-new" id="searchBtn" onclick="searchBooks()">
-                        <i data-feather="search"></i> Search Books
+
+                    <button class="search-btn-new" id="searchBtn" onclick="searchBooks()" aria-label="Search for books">
+                        <i data-feather="search" aria-hidden="true"></i> Search Books
                     </button>
                 </div>
                 
-                <div class="search-tips">
+                <div class="search-tips" id="search-tips">
                     <strong>Smart Search:</strong> Fill in book title, author, or both for more accurate results. Searches Open Library + Google Books simultaneously!
                 </div>
             </div>
 
             <!-- TikTok Mode -->
-            <div class="search-mode" id="tiktokMode">
-                <input 
-                    type="url" 
-                    class="tiktok-input" 
+            <div class="search-mode" id="tiktokMode" role="tabpanel" aria-labelledby="tiktok-tab">
+                <input
+                    type="url"
+                    class="tiktok-input"
                     placeholder="Paste your TikTok link here..."
                     id="tiktokInput"
+                    aria-label="TikTok video URL"
                 >
-                <button class="tiktok-btn" id="tiktokBtn"><i data-feather="search"></i> Find Books from TikTok</button>
+                <button class="tiktok-btn" id="tiktokBtn" aria-label="Find books mentioned in TikTok video"><i data-feather="search" aria-hidden="true"></i> Find Books from TikTok</button>
                 
                 <div class="search-tips">
                     <strong>TikTok Tips:</strong> Works with book reviews, recommendations, hauls, and "what I'm reading" videos!
@@ -714,24 +715,25 @@
             </div>
 
             <!-- AI Chat Mode -->
-            <div class="search-mode" id="aiMode">
+            <div class="search-mode" id="aiMode" role="tabpanel" aria-labelledby="ai-tab">
                 <div class="chat-container" id="chatContainer">
-                    <div class="chat-messages" id="chatMessages">
+                    <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-label="Chat messages">
                         <div class="ai-message">
                             <strong>Sheri's Book AI:</strong> Hey! I'm here to help you discover amazing books with good vibes only!<br><br>
                             Tell me what you're in the mood for - like "cozy mystery for winter reading" or "fantasy with strong female leads" or just "surprise me with something feel-good!"
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="chat-input-container">
-                    <input 
-                        type="text" 
-                        class="chat-input" 
-                        placeholder="What kind of books are you in the mood for? 🌟"
+                    <input
+                        type="text"
+                        class="chat-input"
+                        placeholder="What kind of books are you in the mood for?"
                         id="chatInput"
+                        aria-label="Chat message input"
                     >
-                    <button class="chat-btn" id="chatBtn">Send</button>
+                    <button class="chat-btn" id="chatBtn" aria-label="Send message">Send</button>
                 </div>
                 
                 <div class="search-tips">
@@ -739,24 +741,38 @@
                 </div>
             </div>
             
-            <div class="results" id="results"></div>
+            <div class="results" id="results" aria-live="polite" aria-label="Search results"></div>
         </div>
     </div>
 
     <script>
-        const searchInput = document.getElementById('searchInput');
+        const titleInput = document.getElementById('titleInput');
+        const authorInput = document.getElementById('authorInput');
         const searchBtn = document.getElementById('searchBtn');
         const results = document.getElementById('results');
-        const searchSuggestions = document.getElementById('searchSuggestions');
         const tiktokInput = document.getElementById('tiktokInput');
         const tiktokBtn = document.getElementById('tiktokBtn');
         const chatInput = document.getElementById('chatInput');
         const chatBtn = document.getElementById('chatBtn');
         const chatMessages = document.getElementById('chatMessages');
-        
-        // Recent searches storage
-        let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
-        let searchStats = JSON.parse(localStorage.getItem('searchStats') || '{"totalSearches": 0, "booksAdded": 0}');
+
+        // Recent searches storage with error handling
+        let recentSearches = [];
+        let searchStats = { totalSearches: 0, booksAdded: 0 };
+
+        try {
+            recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+        } catch (e) {
+            console.error('Error parsing recentSearches from localStorage:', e);
+            localStorage.removeItem('recentSearches');
+        }
+
+        try {
+            searchStats = JSON.parse(localStorage.getItem('searchStats') || '{"totalSearches": 0, "booksAdded": 0}');
+        } catch (e) {
+            console.error('Error parsing searchStats from localStorage:', e);
+            localStorage.removeItem('searchStats');
+        }
         
         // Search state
         let currentQuery = '';
@@ -876,13 +892,13 @@
 
         function searchFromSuggestion(suggestion) {
             switchTab('manual');
-            searchInput.value = suggestion;
+            if (titleInput) titleInput.value = suggestion;
             searchBooks();
         }
 
         function searchFromTikTok(bookInfo) {
             switchTab('manual');
-            searchInput.value = bookInfo;
+            if (titleInput) titleInput.value = bookInfo;
             searchBooks();
         }
 
@@ -969,32 +985,22 @@
 
         function searchFromAI(bookInfo) {
             switchTab('manual');
-            searchInput.value = bookInfo;
+            if (titleInput) titleInput.value = bookInfo;
             searchBooks();
         }
 
-        // Show recent searches
+        // Recent searches functionality (simplified - suggestions removed since HTML element doesn't exist)
         function showSuggestions() {
-            if (recentSearches.length === 0) {
-                searchSuggestions.style.display = 'none';
-                return;
-            }
-            
-            searchSuggestions.innerHTML = recentSearches
-                .slice(0, 5)
-                .map(search => `<div class="suggestion-item" onclick="selectSuggestion('${search}')">${search}</div>`)
-                .join('');
-            searchSuggestions.style.display = 'block';
+            // Suggestions feature disabled - HTML element not present
         }
-        
+
         function selectSuggestion(suggestion) {
-            searchInput.value = suggestion;
-            hideSuggestions();
+            if (titleInput) titleInput.value = suggestion;
             searchBooks();
         }
-        
+
         function hideSuggestions() {
-            searchSuggestions.style.display = 'none';
+            // Suggestions feature disabled - HTML element not present
         }
         
         function addToRecentSearches(query) {
@@ -1177,7 +1183,7 @@
                                 First Published: ${firstPublishYear}<br>
                                 ${editionCount} edition${editionCount !== 1 ? 's' : ''} available
                             </div>
-                            <button class="add-btn" onclick="addToNotion('${encodeURIComponent(JSON.stringify(book))}')">
+                            <button class="add-btn" onclick="addToNotion('${encodeURIComponent(JSON.stringify(book))}', event)">
                                 <i data-feather="plus"></i> Add to My Catalog
                             </button>
                         </div>
@@ -1192,7 +1198,7 @@
                 </div>
                 ${books.length < total ? `
                     <div style="text-align: center; padding: 20px;">
-                        <button class="search-btn" onclick="loadMoreBooks()" style="position: static; transform: none; padding: 15px 30px;">
+                        <button class="search-btn" onclick="loadMoreBooks(event)" style="position: static; transform: none; padding: 15px 30px;">
                             Load More Books (${Math.min(20, total - books.length)} more)
                         </button>
                     </div>
@@ -1202,11 +1208,13 @@
             if (window.initializeIcons) window.initializeIcons();
         }
 
-        async function loadMoreBooks() {
-            const loadMoreBtn = event.target;
-            loadMoreBtn.disabled = true;
-            loadMoreBtn.textContent = 'Loading...';
-            
+        async function loadMoreBooks(e) {
+            const loadMoreBtn = e ? e.target : document.querySelector('.search-btn[onclick*="loadMoreBooks"]');
+            if (loadMoreBtn) {
+                loadMoreBtn.disabled = true;
+                loadMoreBtn.textContent = 'Loading...';
+            }
+
             try {
                 await searchBooks(true); // isLoadMore = true
             } finally {
@@ -1214,11 +1222,11 @@
             }
         }
 
-        async function addToNotion(encodedBook) {
+        async function addToNotion(encodedBook, e) {
             const book = JSON.parse(decodeURIComponent(encodedBook));
-            
+
             // Find the button that was clicked and disable it
-            const button = event.target;
+            const button = e ? (e.target.closest('.add-btn') || e.target) : document.activeElement;
             const originalText = button.textContent;
             button.disabled = true;
             button.textContent = 'Adding...';
@@ -1261,42 +1269,31 @@
         }
 
         // Event listeners
-        searchBtn.addEventListener('click', searchBooks);
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                searchBooks();
-            }
-        });
+        if (searchBtn) {
+            searchBtn.addEventListener('click', () => searchBooks());
+        }
 
-        tiktokBtn.addEventListener('click', parseTikTok);
-        tiktokInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                parseTikTok();
-            }
-        });
+        if (tiktokBtn) {
+            tiktokBtn.addEventListener('click', parseTikTok);
+        }
+        if (tiktokInput) {
+            tiktokInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    parseTikTok();
+                }
+            });
+        }
 
-        chatBtn.addEventListener('click', sendChatMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendChatMessage();
-            }
-        });
-
-        searchInput.addEventListener('focus', showSuggestions);
-        searchInput.addEventListener('input', (e) => {
-            if (e.target.value.trim() === '') {
-                showSuggestions();
-            } else {
-                hideSuggestions();
-            }
-        });
-
-        // Hide suggestions when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.search-box')) {
-                hideSuggestions();
-            }
-        });
+        if (chatBtn) {
+            chatBtn.addEventListener('click', sendChatMessage);
+        }
+        if (chatInput) {
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
+            });
+        }
 
         // Add Enter key support for new search fields
         document.getElementById('titleInput')?.addEventListener('keypress', function(e) {

@@ -45,6 +45,11 @@ export default async function handler(req, res) {
             }
             
             const response = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(searchQuery)}&limit=${limit}&offset=${offset}&fields=${fields}`);
+
+            if (!response.ok) {
+              throw new Error(`Open Library API returned ${response.status}`);
+            }
+
             const data = await response.json();
             return { source: 'openlibrary', data, success: true };
           } catch (err) {
@@ -66,6 +71,11 @@ export default async function handler(req, res) {
             const keyParam = apiKey ? `&key=${apiKey}` : '';
             
             const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${searchLimit}&startIndex=${startIndex}${keyParam}`);
+
+            if (!response.ok) {
+              throw new Error(`Google Books API returned ${response.status}`);
+            }
+
             const googleData = await response.json();
             
             // Transform Google Books format to match Open Library format

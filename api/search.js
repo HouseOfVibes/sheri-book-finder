@@ -41,8 +41,13 @@ export default async function handler(req, res) {
     }
     
     const response = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(searchQuery)}&limit=${searchLimit}&offset=${searchOffset}&fields=${fields}`);
+
+    if (!response.ok) {
+      throw new Error(`Open Library API returned ${response.status}: ${response.statusText}`);
+    }
+
     const data = await response.json();
-    
+
     res.status(200).json(data);
   } catch (error) {
     console.error('Search error:', error);
