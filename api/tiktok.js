@@ -35,7 +35,11 @@ export default async function handler(req, res) {
         'User-Agent': 'Mozilla/5.0 (compatible; BookBot/1.0)',
       }
     });
-    
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch TikTok page: ${response.status}`);
+    }
+
     const html = await response.text();
     
     // Extract potential book titles and authors using common patterns

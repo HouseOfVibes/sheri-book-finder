@@ -21,6 +21,21 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Book data is required' });
   }
 
+  // Validate environment variables
+  if (!process.env.NOTION_TOKEN) {
+    return res.status(500).json({
+      error: 'Notion integration not configured',
+      details: 'NOTION_TOKEN environment variable is missing'
+    });
+  }
+
+  if (!process.env.NOTION_DATABASE_ID) {
+    return res.status(500).json({
+      error: 'Notion database not configured',
+      details: 'NOTION_DATABASE_ID environment variable is missing'
+    });
+  }
+
   try {
     const notion = new Client({
       auth: process.env.NOTION_TOKEN,
@@ -52,7 +67,7 @@ export default async function handler(req, res) {
     let partOfSeries = 'No'; // Default
     let audioAvailable = 'No'; // Default
     
-    if (book.subject) {
+    if (book.subject && Array.isArray(book.subject)) {
       const subjects = book.subject.slice(0, 15); // Check more subjects for better accuracy
       subjects.forEach(subject => {
         const lowerSubject = subject.toLowerCase();
